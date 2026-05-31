@@ -1,6 +1,7 @@
 import numpy as np
 import nnfs
 from nnfs.datasets import spiral_data
+from Loss import Loss_CategoricalCrossentropy
 
 nnfs.init()
 
@@ -32,28 +33,6 @@ class Activation_Softmax:
         self.output = probabilities
 
 
-class Loss:
-    def calculate(self, output, y):
-        sample_losses = self.forward(output, y)
-        data_loss = np.mean(sample_losses)
-        return data_loss
-
-
-class Loss_CategoricalCrossentropy(Loss):
-    def forward(self, y_pred, y_true):
-        samples = len(y_pred)
-        y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
-
-        # need to check if the categories passed are scalar or a hot one encoded vector
-        if len(y_true.shape) == 1:
-            correct_confidences = y_pred_clipped[range(samples), y_true]
-        elif len(y_true.shape == 2):
-            correct_confidences = np.sum(y_pred_clipped * y_true, axis=1)
-
-        negative_log_likelihood = -np.log(correct_confidences)
-        return negative_log_likelihood
-
-
 X, y = spiral_data(
     samples=100, classes=3
 )  # 100 data points that has 2 features each (x and y coordinates)
@@ -73,8 +52,15 @@ activation1.forward(dense1.output)
 dense2.forward(activation1.output)
 activation2.forward(dense2.output)
 
-
 loss_function = Loss_CategoricalCrossentropy()
 loss = loss_function.calculate(activation2.output, y)
 
-print("Loss:", loss)
+
+predictions = np.argmax(activation2.output, axis=1)
+if len(y.shape) == 2:
+    y = np.argmax(y, axis=1)
+
+accuracy = np.mean(predictions ==y)
+
+print("Loss: ", loss)
+print("Accuracy: ", accuracy)
