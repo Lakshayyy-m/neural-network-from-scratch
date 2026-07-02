@@ -1,7 +1,8 @@
 import numpy as np
 import nnfs
 from nnfs.datasets import spiral_data
-from Loss import Loss_CategoricalCrossentropy
+from loss import Loss_CategoricalCrossentropy
+from activation import Activation_Softmax, Activation_ReLU
 
 nnfs.init()
 
@@ -17,20 +18,6 @@ class Layer_Dense:
 
     def forward(self, inputs):
         self.output = np.dot(inputs, self.weights) + self.biases
-
-
-class Activation_ReLU:
-    def forward(self, inputs):
-        self.output = np.maximum(0, inputs)
-
-
-class Activation_Softmax:
-    def forward(self, inputs):
-        exp_values = np.exp(
-            inputs - np.max(inputs, axis=1, keepdims=True)
-        )  # this ensures that we keeping the dimensions the same, meaning that the max is not calculated overall the batch outputs but per outputs. And then ofcourse the axis is related to which axis to calcualte the max in(here we are taking it as row)
-        probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
-        self.output = probabilities
 
 
 X, y = spiral_data(
@@ -60,7 +47,7 @@ predictions = np.argmax(activation2.output, axis=1)
 if len(y.shape) == 2:
     y = np.argmax(y, axis=1)
 
-accuracy = np.mean(predictions ==y)
+accuracy = np.mean(predictions == y)
 
 print("Loss: ", loss)
 print("Accuracy: ", accuracy)
