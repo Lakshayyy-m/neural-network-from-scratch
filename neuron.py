@@ -13,10 +13,27 @@ np.random.seed(0)
 
 class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
+        if not isinstance(n_inputs, (int, np.integer)) or n_inputs <= 0:
+            raise ValueError(f"'n_inputs' must be a positive integer, got {n_inputs!r}")
+        if not isinstance(n_neurons, (int, np.integer)) or n_neurons <= 0:
+            raise ValueError(f"'n_neurons' must be a positive integer, got {n_neurons!r}")
         self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 
     def forward(self, inputs):
+        if not isinstance(inputs, np.ndarray):
+            raise TypeError(f"'inputs' must be a numpy array, got {type(inputs).__name__}")
+        if inputs.size == 0:
+            raise ValueError("'inputs' must not be empty")
+        if inputs.ndim < 2:
+            raise ValueError(
+                f"'inputs' must be at least 2D (batch of samples), got {inputs.ndim}D"
+            )
+        if inputs.shape[1] != self.weights.shape[0]:
+            raise ValueError(
+                f"Input feature size ({inputs.shape[1]}) does not match "
+                f"layer's expected input size ({self.weights.shape[0]})"
+            )
         self.output = np.dot(inputs, self.weights) + self.biases
 
 
