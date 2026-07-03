@@ -21,7 +21,7 @@ class Activation_Softmax:
         self.dinputs = np.empty_like(dvalues)
 
         # Enumerate outputs and gradients
-        for index, (single_output, single_dvalues) in enumerate(zip(self.ouput, dvalues)):
+        for index, (single_output, single_dvalues) in enumerate(zip(self.output, dvalues)):
             #Flatten output array
             single_output = single_output.reshape(-1, 1)
 
