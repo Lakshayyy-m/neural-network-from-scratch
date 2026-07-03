@@ -16,7 +16,7 @@ class Loss_CategoricalCrossentropy(Loss):
         # need to check if the categories passed are scalar or a hot one encoded vector
         if len(y_true.shape) == 1:
             correct_confidences = y_pred_clipped[range(samples), y_true]
-        elif len(y_true.shape == 2):
+        elif len(y_true.shape) == 2:
             correct_confidences = np.sum(y_pred_clipped * y_true, axis=1)
 
         negative_log_likelihood = -np.log(correct_confidences)
